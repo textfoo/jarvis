@@ -1,0 +1,21 @@
+{
+  "name": "jarvis",
+  "version": "1.0.0",
+  "description": "a discord bot",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ../app"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "discord.js": "^11.4.2",
+    "install": "^0.12.2",
+    "twitch-api-v5": "^2.0.4"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.4"
+  }
+}
