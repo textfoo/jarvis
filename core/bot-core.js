@@ -1,14 +1,19 @@
 const { prefix, token } = require('../config/config.json'); 
-const Discord = require('discord.js'); 
-const client = new Discord.Client(); 
 const fs = require('fs'); 
+const Discord = require('discord.js'); 
+const BotSocket = require('./bot-socket.js'); 
+const client = new Discord.Client(); 
+const bs = new BotSocket(); 
+
 
 class Bot {
     constructor() {
-        this.cmdList = [];
         this.client = client; 
+        this.bs = bs; 
         this.loadCommands(); 
+        //this.configureSocketServer(); 
         this.client.on('message', message => this.msg(message)); 
+        //this.client.on('presenceUpdate', (oldMember, newMember) => this.presence(oldMember, newMember));
         this.client.on('ready', this.ready); 
         this.client.login(token);
     }
@@ -17,8 +22,28 @@ class Bot {
         console.log('bot status : ready');
     }
 
+    configureSocketServer() { 
+        this.bs.loadCommands(); 
+        this.bs.wss.on('connection', (ws, req) => {
+            console.log(`client connected via : ${req.connection.remoteAddress}`)
+        }); 
+
+        this.bs.wss.on('close', () => {
+            console.log(`
+            client disconnected.
+            current listeners : ${this.bs.wss.listenerCount}
+            `);
+        });
+    }
+
+    presence(oldMember, newMember) {
+        console.log('presence update'); 
+        console.log(oldMember); 
+        console.log(newMember); 
+    }
+
     msg(message) {
-        console.log(`${message.author.username} : ${message.content}`); 
+        console.log(`${message.author.username} | ${message.author.id} : ${message.content}`); 
         if(!message.content.startsWith(prefix) || message.author.bot) return;
         
         const args = message.content.slice(prefix.length).split(/ +/);
@@ -34,7 +59,8 @@ class Bot {
         if(!client.commands.has(command)) return; 
         
         try{
-            console.log(`executing cmd : ${command}`)
+            console.log(`executing cmd : ${command}`);
+            console.log(`args array : ${args}`);
             client.commands.get(command).execute(message, args);
         }
         catch(error){
@@ -45,9 +71,9 @@ class Bot {
 
     loadCommands(){
         this.client.commands = new Discord.Collection();
-        const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js')); 
+        const commandFiles = fs.readdirSync('./commands/bot-commands').filter(file => file.endsWith('.js')); 
         for(const file of commandFiles){
-            const command = require(`../commands/${file}`); 
+            const command = require(`../commands/bot-commands/${file}`); 
             console.log(`loading cmd : ${command.name}`)
             this.client.commands.set(command.name, command); 
         }

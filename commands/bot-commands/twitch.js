@@ -1,4 +1,4 @@
-const Twitch = require('../apis/twitch'); 
+const Twitch = require('../../apis/twitch.js'); 
 const twitch = new Twitch(); 
 const axios = require('axios'); 
 

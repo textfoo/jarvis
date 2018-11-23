@@ -65,3 +65,5 @@ typings/
 
 #configuration file
 config/config.json
+config/db-config.json
+config/socket-config

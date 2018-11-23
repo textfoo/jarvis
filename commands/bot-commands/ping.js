@@ -4,4 +4,4 @@ module.exports = {
     execute(message, args) { 
         message.reply(`Current latency to server : ${message.client.ping}ms`);
     }
-};
+}; 3
