@@ -1,5 +1,9 @@
 const MongoClient = require('mongodb').MongoClient; 
 const { connectionString } = require('../config/db-config.json'); 
+
+const Logger = require('../utility/logger');
+const logger = new Logger(); 
+
 let db = null; 
 let collection = null; 
 MongoClient.connect(connectionString, { useNewUrlParser : true}, (err, client) => {
@@ -10,8 +14,11 @@ MongoClient.connect(connectionString, { useNewUrlParser : true}, (err, client) =
 
 class WalletInterface  {
     static async fetchBalance(discordId) {
+        logger.info(`WalletInterface | fetchBalance | discordId ${discordId}`);
         try {
-            return await collection.findOne({ 'd-uid' : discordId }, { 'bal' : 1 });
+            const response = await collection.findOne({ 'd-uid' : discordId }, { 'bal' : 1 });
+            logger.debug(`WalletInterface | fetchBalance | response : ${JSON.stringify(response)}`); 
+            return response;
         }catch(error) {
             console.log(error); 
         }

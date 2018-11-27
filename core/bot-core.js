@@ -5,9 +5,12 @@ const BotSocket = require('./bot-socket.js');
 const client = new Discord.Client(); 
 const bs = new BotSocket(); 
 
+const Logger = require('../utility/logger');
+const logger = new Logger(); 
 
 class Bot {
     constructor() {
+        logger.info('Loading Bot...'); 
         this.client = client; 
         this.bs = bs; 
         this.loadCommands(); 
@@ -19,7 +22,7 @@ class Bot {
     }
 
     ready() {
-        console.log('bot status : ready');
+        logger.info('Bot Status : ready');
     }
 
     configureSocketServer() { 
@@ -43,7 +46,6 @@ class Bot {
     }
 
     msg(message) {
-        console.log(`${message.author.username} | ${message.author.id} : ${message.content}`); 
         if(!message.content.startsWith(prefix) || message.author.bot) return;
         
         const args = message.content.slice(prefix.length).split(/ +/);
@@ -59,22 +61,20 @@ class Bot {
         if(!client.commands.has(command)) return; 
         
         try{
-            console.log(`executing cmd : ${command}`);
-            console.log(`args array : ${args}`);
             client.commands.get(command).execute(message, args);
         }
         catch(error){
-            console.error(error); 
-            message.reply('whoups');
+            logger.error(error); 
         }
     }
 
     loadCommands(){
+        logger.info(`Loading Client Commands`);
         this.client.commands = new Discord.Collection();
         const commandFiles = fs.readdirSync('./commands/bot-commands').filter(file => file.endsWith('.js')); 
+        logger.info(`Loading ${commandFiles.length} command files...`)
         for(const file of commandFiles){
             const command = require(`../commands/bot-commands/${file}`); 
-            console.log(`loading cmd : ${command.name}`)
             this.client.commands.set(command.name, command); 
         }
     }

@@ -4,7 +4,8 @@
   "description": "a discord bot",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon ../app"
+    "dev": "nodemon ../app",
+    "test": "jest --watchAll"
   },
   "author": "",
   "license": "ISC",
@@ -18,6 +19,8 @@
     "ws": "^6.1.0"
   },
   "devDependencies": {
+    "app-root-path": "^2.1.0",
+    "jest": "^23.6.0",
     "nodemon": "^1.18.4"
   }
 }

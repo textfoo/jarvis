@@ -1,4 +1,8 @@
 const WalletInterface = require('../../interfaces/wallet-interface'); 
+
+const Logger = require('../../utility/logger');
+const logger = new Logger(); 
+
 const ss = '℈'; 
 
 module.exports = {
@@ -20,10 +24,10 @@ module.exports = {
 
         async function fetchWalletBalance(message) {        
             try {
-                console.log(`hit origional`);
+                logger.info(`wallet-commands | wallet.js | fetchWalletBalance`);
                 var response = await WalletInterface.fetchBalance(message.author.id); 
                 if(response == null) {
-                    message.reply(`No account found. Would you like to open on? (hint: !broker open)`)
+                    message.reply(`No account found. Would you like to open on? (hint: !wallet open)`)
                     return; 
             }
             await message.reply(` balance : ${ss}${response.bal}.`);
@@ -34,6 +38,7 @@ module.exports = {
 
         async function fetchWalletBalanceByUser(message, args) {
             try{
+            logger.info(`wallet-commands | wallet.js | fetchWalletBalanceByUser | args : ${args}`)
             const discordId = args[1].substring(2, args[1].length -1); 
             if(isNaN(parseInt(discordId))) {
                 await message.reply(' could not identify user. Try "@"ing with the username.'); 
@@ -41,7 +46,7 @@ module.exports = {
             }
             const response = await WalletInterface.fetchBalance(discordId); 
             if(response == null) {
-                message.reply(`No account found. Would you like to open on? (hint: !wallet open)`)
+                await message.reply(`No account found. Would you like to open on? (hint: !wallet open)`)
                     return;
             }
             await message.reply(` balance : ${ss}${response.bal}`);
